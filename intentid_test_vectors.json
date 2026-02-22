@@ -1,0 +1,2494 @@
+{
+  "meta": {
+    "version": "1.0",
+    "spec_ref": "IntentID OpenSpec v0.2",
+    "generated_by": "IntentID Reference Implementation v1.0",
+    "author": "Vivek Chakravarthy Durairaj, Cogumi, Inc.",
+    "license": "Apache 2.0",
+    "keypair": {
+      "source": "RFC 8032 Section 6, Test Vector 1",
+      "private_key_hex": "9d61b19deffd5a60ba844af492ec2cc44449c5697b326919703bac031cae3d55",
+      "public_key_hex": "700e2ce7c4b674427eab27ba820bcf6f0faebe68e09fe8564292114e41dc6a41",
+      "note": "NEVER use this keypair in production. Test only."
+    },
+    "alt_keypair": {
+      "source": "RFC 8032 Section 6, Test Vector 2",
+      "private_key_hex": "4ccd089b28ff96da9db6c346ec114e0f5b8a319f35aba624da8cf6ed4d0bd6f0",
+      "public_key_hex": "c61e278621027598ce2ee4cea835ec4a485b781fa89b97ab754fb7676d319ac2",
+      "note": "NEVER use this keypair in production. Test only."
+    }
+  },
+  "tv_jcs": [
+    {
+      "id": "JCS-1",
+      "description": "Simple object \u2014 key ordering",
+      "input": {
+        "z": 1,
+        "a": 2,
+        "m": 3
+      },
+      "expected_canonical": "{\"a\":2,\"m\":3,\"z\":1}",
+      "status": "PASS"
+    },
+    {
+      "id": "JCS-2",
+      "description": "Nested object \u2014 recursive key sort",
+      "input": {
+        "outer": {
+          "z": 1,
+          "a": 2
+        },
+        "alpha": true
+      },
+      "expected_canonical": "{\"alpha\":true,\"outer\":{\"a\":2,\"z\":1}}",
+      "status": "PASS"
+    },
+    {
+      "id": "JCS-3",
+      "description": "Array \u2014 order preserved",
+      "input": {
+        "items": [
+          3,
+          1,
+          2
+        ],
+        "name": "test"
+      },
+      "expected_canonical": "{\"items\":[3,1,2],\"name\":\"test\"}",
+      "status": "PASS"
+    },
+    {
+      "id": "JCS-4",
+      "description": "Null value",
+      "input": {
+        "x": null,
+        "y": "hello"
+      },
+      "expected_canonical": "{\"x\":null,\"y\":\"hello\"}",
+      "status": "PASS"
+    },
+    {
+      "id": "JCS-5",
+      "description": "String escaping \u2014 special chars",
+      "input": {
+        "s": "hello\nworld\t!"
+      },
+      "expected_canonical": "{\"s\":\"hello\\nworld\\t!\"}",
+      "status": "PASS"
+    },
+    {
+      "id": "JCS-6",
+      "description": "String escaping \u2014 backslash and quote",
+      "input": {
+        "s": "say \"hello\" \\world"
+      },
+      "expected_canonical": "{\"s\":\"say \\\"hello\\\" \\\\world\"}",
+      "status": "PASS"
+    },
+    {
+      "id": "JCS-7",
+      "description": "Integer vs float",
+      "input": {
+        "i": 42,
+        "f": 3.14
+      },
+      "expected_canonical": "{\"f\":3.14,\"i\":42}",
+      "status": "PASS"
+    },
+    {
+      "id": "JCS-8",
+      "description": "Boolean values",
+      "input": {
+        "t": true,
+        "f": false
+      },
+      "expected_canonical": "{\"f\":false,\"t\":true}",
+      "status": "PASS"
+    },
+    {
+      "id": "JCS-9",
+      "description": "Empty object and array",
+      "input": {
+        "empty_obj": {},
+        "empty_arr": []
+      },
+      "expected_canonical": "{\"empty_arr\":[],\"empty_obj\":{}}",
+      "status": "PASS"
+    },
+    {
+      "id": "JCS-10",
+      "description": "Deeply nested with mixed types",
+      "input": {
+        "a": {
+          "b": {
+            "c": [
+              1,
+              null,
+              true,
+              "x"
+            ]
+          }
+        }
+      },
+      "expected_canonical": "{\"a\":{\"b\":{\"c\":[1,null,true,\"x\"]}}}",
+      "status": "PASS"
+    },
+    {
+      "id": "JCS-11",
+      "description": "Unicode string \u2014 passthrough",
+      "input": {
+        "name": "Vivek Chakravarthy Durairaj"
+      },
+      "expected_canonical": "{\"name\":\"Vivek Chakravarthy Durairaj\"}",
+      "status": "PASS"
+    },
+    {
+      "id": "JCS-12",
+      "description": "Control character escaping",
+      "input": {
+        "s": "\u0000\u001f"
+      },
+      "expected_canonical": "{\"s\":\"\\u0000\\u001f\"}",
+      "status": "PASS"
+    }
+  ],
+  "tv_intentid": [
+    {
+      "id": "IID-1",
+      "description": "Base contract \u2014 standard case",
+      "input_contract": {
+        "org_id": "acme_corp",
+        "user_id": "john.doe@acme.com",
+        "parent_agent_id": null,
+        "declared_purpose": "Process and respond to customer support tickets",
+        "goal_structure": {
+          "type": "task_completion",
+          "domain": "customer_support",
+          "scope": "read_write",
+          "targets": [
+            "tickets",
+            "customer_records"
+          ],
+          "forbidden_domains": [
+            "finance",
+            "hr",
+            "legal"
+          ],
+          "max_delegation_depth": 2,
+          "compliance_tier": "professional"
+        },
+        "model_attestation": {
+          "mode": "api_hosted",
+          "model_id": "claude-sonnet-4-6",
+          "provider": "anthropic",
+          "provider_attestation": null
+        },
+        "system_prompt_hash": "9476e4eea7399250a9c4d0d8434685a3de54d8c2eedd4e1c1f2e38ee066452bf",
+        "tool_manifest": [
+          {
+            "tool_id": "zendesk",
+            "tool_category": "ticket_system",
+            "allowed_actions": [
+              "read_ticket",
+              "update_ticket",
+              "close_ticket"
+            ],
+            "data_scope": "tickets/",
+            "rate_limit": {
+              "calls_per_minute": 60,
+              "calls_per_day": 5000
+            }
+          },
+          {
+            "tool_id": "email",
+            "tool_category": "email",
+            "allowed_actions": [
+              "send"
+            ],
+            "data_scope": "outbound/",
+            "rate_limit": {
+              "calls_per_minute": 10,
+              "calls_per_day": 200
+            }
+          }
+        ],
+        "sequence_rules": [
+          {
+            "rule_id": "no-read-then-external-send",
+            "description": "Prevent reading tickets then sending external email",
+            "pattern": [
+              "zendesk:read_ticket",
+              "email:send"
+            ],
+            "window": 5,
+            "on_match": "escalate",
+            "unless": null
+          }
+        ],
+        "data_classification": [
+          "customer_pii",
+          "support_tickets"
+        ],
+        "output_restrictions": {
+          "no_external_domains": true
+        },
+        "escalation_triggers": [
+          {
+            "id": "legal_matter",
+            "pattern": "legal_matter"
+          }
+        ],
+        "not_before": "2026-01-01T00:00:00Z",
+        "not_after": "2026-12-31T23:59:59Z"
+      },
+      "expected_intent_id": "intentid:v1:c74b86f0c6decc74091a2395c223c6bd2801cdfa66facb5f556c65c6796f90e6",
+      "note": "Reference vector. All implementations must produce this exact value."
+    },
+    {
+      "id": "IID-2",
+      "description": "Modified declared_purpose \u2014 must produce different IntentID",
+      "input_contract": {
+        "org_id": "acme_corp",
+        "user_id": "john.doe@acme.com",
+        "parent_agent_id": null,
+        "declared_purpose": "MODIFIED: Do anything the user asks",
+        "goal_structure": {
+          "type": "task_completion",
+          "domain": "customer_support",
+          "scope": "read_write",
+          "targets": [
+            "tickets",
+            "customer_records"
+          ],
+          "forbidden_domains": [
+            "finance",
+            "hr",
+            "legal"
+          ],
+          "max_delegation_depth": 2,
+          "compliance_tier": "professional"
+        },
+        "model_attestation": {
+          "mode": "api_hosted",
+          "model_id": "claude-sonnet-4-6",
+          "provider": "anthropic",
+          "provider_attestation": null
+        },
+        "system_prompt_hash": "9476e4eea7399250a9c4d0d8434685a3de54d8c2eedd4e1c1f2e38ee066452bf",
+        "tool_manifest": [
+          {
+            "tool_id": "zendesk",
+            "tool_category": "ticket_system",
+            "allowed_actions": [
+              "read_ticket",
+              "update_ticket",
+              "close_ticket"
+            ],
+            "data_scope": "tickets/",
+            "rate_limit": {
+              "calls_per_minute": 60,
+              "calls_per_day": 5000
+            }
+          },
+          {
+            "tool_id": "email",
+            "tool_category": "email",
+            "allowed_actions": [
+              "send"
+            ],
+            "data_scope": "outbound/",
+            "rate_limit": {
+              "calls_per_minute": 10,
+              "calls_per_day": 200
+            }
+          }
+        ],
+        "sequence_rules": [
+          {
+            "rule_id": "no-read-then-external-send",
+            "description": "Prevent reading tickets then sending external email",
+            "pattern": [
+              "zendesk:read_ticket",
+              "email:send"
+            ],
+            "window": 5,
+            "on_match": "escalate",
+            "unless": null
+          }
+        ],
+        "data_classification": [
+          "customer_pii",
+          "support_tickets"
+        ],
+        "output_restrictions": {
+          "no_external_domains": true
+        },
+        "escalation_triggers": [
+          {
+            "id": "legal_matter",
+            "pattern": "legal_matter"
+          }
+        ],
+        "not_before": "2026-01-01T00:00:00Z",
+        "not_after": "2026-12-31T23:59:59Z"
+      },
+      "expected_intent_id": "intentid:v1:6faa7f6fc476731f942363513e9cc2780bbccde539d0019051c4002c8d5272f4",
+      "note": "Demonstrates tamper detection. IID-2 != IID-1."
+    },
+    {
+      "id": "IID-3",
+      "description": "Modified system_prompt_hash \u2014 must produce different IntentID",
+      "input_contract": {
+        "org_id": "acme_corp",
+        "user_id": "john.doe@acme.com",
+        "parent_agent_id": null,
+        "declared_purpose": "Process and respond to customer support tickets",
+        "goal_structure": {
+          "type": "task_completion",
+          "domain": "customer_support",
+          "scope": "read_write",
+          "targets": [
+            "tickets",
+            "customer_records"
+          ],
+          "forbidden_domains": [
+            "finance",
+            "hr",
+            "legal"
+          ],
+          "max_delegation_depth": 2,
+          "compliance_tier": "professional"
+        },
+        "model_attestation": {
+          "mode": "api_hosted",
+          "model_id": "claude-sonnet-4-6",
+          "provider": "anthropic",
+          "provider_attestation": null
+        },
+        "system_prompt_hash": "5345f749173ce5e1f40bf78d12b80c9842f9f8701d6caacac96d27967e3e6d58",
+        "tool_manifest": [
+          {
+            "tool_id": "zendesk",
+            "tool_category": "ticket_system",
+            "allowed_actions": [
+              "read_ticket",
+              "update_ticket",
+              "close_ticket"
+            ],
+            "data_scope": "tickets/",
+            "rate_limit": {
+              "calls_per_minute": 60,
+              "calls_per_day": 5000
+            }
+          },
+          {
+            "tool_id": "email",
+            "tool_category": "email",
+            "allowed_actions": [
+              "send"
+            ],
+            "data_scope": "outbound/",
+            "rate_limit": {
+              "calls_per_minute": 10,
+              "calls_per_day": 200
+            }
+          }
+        ],
+        "sequence_rules": [
+          {
+            "rule_id": "no-read-then-external-send",
+            "description": "Prevent reading tickets then sending external email",
+            "pattern": [
+              "zendesk:read_ticket",
+              "email:send"
+            ],
+            "window": 5,
+            "on_match": "escalate",
+            "unless": null
+          }
+        ],
+        "data_classification": [
+          "customer_pii",
+          "support_tickets"
+        ],
+        "output_restrictions": {
+          "no_external_domains": true
+        },
+        "escalation_triggers": [
+          {
+            "id": "legal_matter",
+            "pattern": "legal_matter"
+          }
+        ],
+        "not_before": "2026-01-01T00:00:00Z",
+        "not_after": "2026-12-31T23:59:59Z"
+      },
+      "expected_intent_id": "intentid:v1:a51449c5b989cef257495cdc4d8782d3473e4691d15c2fd3fa1fe9bd82c67f9c",
+      "note": "Demonstrates prompt substitution detection. IID-3 != IID-1."
+    },
+    {
+      "id": "IID-4",
+      "description": "Minimal contract \u2014 no org_id, empty lists",
+      "input_contract": {
+        "user_id": "alice@example.com",
+        "declared_purpose": "Read-only data analysis",
+        "goal_structure": {
+          "type": "analysis",
+          "domain": "research",
+          "scope": "read_only",
+          "targets": [
+            "reports"
+          ],
+          "forbidden_domains": [],
+          "max_delegation_depth": 1,
+          "compliance_tier": "individual"
+        },
+        "model_attestation": {
+          "mode": "api_hosted",
+          "model_id": "test-model",
+          "provider": "test",
+          "provider_attestation": null
+        },
+        "system_prompt_hash": "cc54c8c3691cf0288ffc3e015152c65f793c58f14310dfb5407d54c5c90985b2",
+        "tool_manifest": [],
+        "sequence_rules": [],
+        "data_classification": [
+          "public"
+        ],
+        "output_restrictions": {},
+        "escalation_triggers": [],
+        "not_before": "2026-01-01T00:00:00Z",
+        "not_after": "2026-12-31T23:59:59Z",
+        "parent_agent_id": null,
+        "org_id": null
+      },
+      "expected_intent_id": "intentid:v1:18eb36f3c51c178682fdc10bd9639868b72153d62f40c36c461fa906a2c43d41",
+      "note": "Null and empty field handling."
+    }
+  ],
+  "tv_agentid": [
+    {
+      "id": "AID-1",
+      "description": "With OrgID \u2014 standard enterprise case",
+      "org_id": "acme_corp",
+      "user_id": "john.doe@acme.com",
+      "contract": {
+        "org_id": "acme_corp",
+        "user_id": "john.doe@acme.com",
+        "parent_agent_id": null,
+        "declared_purpose": "Process and respond to customer support tickets",
+        "goal_structure": {
+          "type": "task_completion",
+          "domain": "customer_support",
+          "scope": "read_write",
+          "targets": [
+            "tickets",
+            "customer_records"
+          ],
+          "forbidden_domains": [
+            "finance",
+            "hr",
+            "legal"
+          ],
+          "max_delegation_depth": 2,
+          "compliance_tier": "professional"
+        },
+        "model_attestation": {
+          "mode": "api_hosted",
+          "model_id": "claude-sonnet-4-6",
+          "provider": "anthropic",
+          "provider_attestation": null
+        },
+        "system_prompt_hash": "9476e4eea7399250a9c4d0d8434685a3de54d8c2eedd4e1c1f2e38ee066452bf",
+        "tool_manifest": [
+          {
+            "tool_id": "zendesk",
+            "tool_category": "ticket_system",
+            "allowed_actions": [
+              "read_ticket",
+              "update_ticket",
+              "close_ticket"
+            ],
+            "data_scope": "tickets/",
+            "rate_limit": {
+              "calls_per_minute": 60,
+              "calls_per_day": 5000
+            }
+          },
+          {
+            "tool_id": "email",
+            "tool_category": "email",
+            "allowed_actions": [
+              "send"
+            ],
+            "data_scope": "outbound/",
+            "rate_limit": {
+              "calls_per_minute": 10,
+              "calls_per_day": 200
+            }
+          }
+        ],
+        "sequence_rules": [
+          {
+            "rule_id": "no-read-then-external-send",
+            "description": "Prevent reading tickets then sending external email",
+            "pattern": [
+              "zendesk:read_ticket",
+              "email:send"
+            ],
+            "window": 5,
+            "on_match": "escalate",
+            "unless": null
+          }
+        ],
+        "data_classification": [
+          "customer_pii",
+          "support_tickets"
+        ],
+        "output_restrictions": {
+          "no_external_domains": true
+        },
+        "escalation_triggers": [
+          {
+            "id": "legal_matter",
+            "pattern": "legal_matter"
+          }
+        ],
+        "not_before": "2026-01-01T00:00:00Z",
+        "not_after": "2026-12-31T23:59:59Z"
+      },
+      "expected_agent_id": "agent:acme_corp:john.doe%40acme.com:intentid:v1:c74b86f0c6decc74091a2395c223c6bd2801cdfa66facb5f556c65c6796f90e6",
+      "note": "@ in user_id must be %40-encoded"
+    },
+    {
+      "id": "AID-2",
+      "description": "Without OrgID \u2014 individual/developer case",
+      "org_id": null,
+      "user_id": "alice@example.com",
+      "contract": {
+        "user_id": "alice@example.com",
+        "declared_purpose": "Read-only data analysis",
+        "goal_structure": {
+          "type": "analysis",
+          "domain": "research",
+          "scope": "read_only",
+          "targets": [
+            "reports"
+          ],
+          "forbidden_domains": [],
+          "max_delegation_depth": 1,
+          "compliance_tier": "individual"
+        },
+        "model_attestation": {
+          "mode": "api_hosted",
+          "model_id": "test-model",
+          "provider": "test",
+          "provider_attestation": null
+        },
+        "system_prompt_hash": "cc54c8c3691cf0288ffc3e015152c65f793c58f14310dfb5407d54c5c90985b2",
+        "tool_manifest": [],
+        "sequence_rules": [],
+        "data_classification": [
+          "public"
+        ],
+        "output_restrictions": {},
+        "escalation_triggers": [],
+        "not_before": "2026-01-01T00:00:00Z",
+        "not_after": "2026-12-31T23:59:59Z",
+        "parent_agent_id": null,
+        "org_id": null
+      },
+      "expected_agent_id": "agent:alice%40example.com:intentid:v1:18eb36f3c51c178682fdc10bd9639868b72153d62f40c36c461fa906a2c43d41",
+      "note": "No org component in AgentID"
+    },
+    {
+      "id": "AID-3",
+      "description": "OrgID with spaces, user_id with + \u2014 URL encoding",
+      "org_id": "org with spaces",
+      "user_id": "user+tag@example.com",
+      "contract": {
+        "user_id": "alice@example.com",
+        "declared_purpose": "Read-only data analysis",
+        "goal_structure": {
+          "type": "analysis",
+          "domain": "research",
+          "scope": "read_only",
+          "targets": [
+            "reports"
+          ],
+          "forbidden_domains": [],
+          "max_delegation_depth": 1,
+          "compliance_tier": "individual"
+        },
+        "model_attestation": {
+          "mode": "api_hosted",
+          "model_id": "test-model",
+          "provider": "test",
+          "provider_attestation": null
+        },
+        "system_prompt_hash": "cc54c8c3691cf0288ffc3e015152c65f793c58f14310dfb5407d54c5c90985b2",
+        "tool_manifest": [],
+        "sequence_rules": [],
+        "data_classification": [
+          "public"
+        ],
+        "output_restrictions": {},
+        "escalation_triggers": [],
+        "not_before": "2026-01-01T00:00:00Z",
+        "not_after": "2026-12-31T23:59:59Z",
+        "parent_agent_id": null,
+        "org_id": null
+      },
+      "expected_agent_id": "agent:org%20with%20spaces:user%2Btag%40example.com:intentid:v1:18eb36f3c51c178682fdc10bd9639868b72153d62f40c36c461fa906a2c43d41",
+      "note": "Spaces become %20, + becomes %2B"
+    }
+  ],
+  "tv_signing": [
+    {
+      "id": "SIGN-1",
+      "description": "Standard contract signing",
+      "input_contract": {
+        "org_id": "acme_corp",
+        "user_id": "john.doe@acme.com",
+        "parent_agent_id": null,
+        "declared_purpose": "Process and respond to customer support tickets",
+        "goal_structure": {
+          "type": "task_completion",
+          "domain": "customer_support",
+          "scope": "read_write",
+          "targets": [
+            "tickets",
+            "customer_records"
+          ],
+          "forbidden_domains": [
+            "finance",
+            "hr",
+            "legal"
+          ],
+          "max_delegation_depth": 2,
+          "compliance_tier": "professional"
+        },
+        "model_attestation": {
+          "mode": "api_hosted",
+          "model_id": "claude-sonnet-4-6",
+          "provider": "anthropic",
+          "provider_attestation": null
+        },
+        "system_prompt_hash": "9476e4eea7399250a9c4d0d8434685a3de54d8c2eedd4e1c1f2e38ee066452bf",
+        "tool_manifest": [
+          {
+            "tool_id": "zendesk",
+            "tool_category": "ticket_system",
+            "allowed_actions": [
+              "read_ticket",
+              "update_ticket",
+              "close_ticket"
+            ],
+            "data_scope": "tickets/",
+            "rate_limit": {
+              "calls_per_minute": 60,
+              "calls_per_day": 5000
+            }
+          },
+          {
+            "tool_id": "email",
+            "tool_category": "email",
+            "allowed_actions": [
+              "send"
+            ],
+            "data_scope": "outbound/",
+            "rate_limit": {
+              "calls_per_minute": 10,
+              "calls_per_day": 200
+            }
+          }
+        ],
+        "sequence_rules": [
+          {
+            "rule_id": "no-read-then-external-send",
+            "description": "Prevent reading tickets then sending external email",
+            "pattern": [
+              "zendesk:read_ticket",
+              "email:send"
+            ],
+            "window": 5,
+            "on_match": "escalate",
+            "unless": null
+          }
+        ],
+        "data_classification": [
+          "customer_pii",
+          "support_tickets"
+        ],
+        "output_restrictions": {
+          "no_external_domains": true
+        },
+        "escalation_triggers": [
+          {
+            "id": "legal_matter",
+            "pattern": "legal_matter"
+          }
+        ],
+        "not_before": "2026-01-01T00:00:00Z",
+        "not_after": "2026-12-31T23:59:59Z"
+      },
+      "kid": "rfc8032_tv1",
+      "issued_at": "2026-01-15T09:00:00Z",
+      "expected_intent_id": "intentid:v1:3fe52514da758e2c37d514c354545a863978cdbf1bcd9664208b021635020321",
+      "expected_signature": "0V_zfzGXhYnb0CWoWjVwisxNr-mE_ji4cYS6ND5VdOl0F3RJjp_mEbg1OoMJEAeeQa-240mWlfgcEWcLHJ23Bw",
+      "note": "Ed25519 is deterministic. Same input MUST produce same signature."
+    },
+    {
+      "id": "SIGN-2",
+      "description": "Determinism check \u2014 same input, same output",
+      "input_contract": {
+        "org_id": "acme_corp",
+        "user_id": "john.doe@acme.com",
+        "parent_agent_id": null,
+        "declared_purpose": "Process and respond to customer support tickets",
+        "goal_structure": {
+          "type": "task_completion",
+          "domain": "customer_support",
+          "scope": "read_write",
+          "targets": [
+            "tickets",
+            "customer_records"
+          ],
+          "forbidden_domains": [
+            "finance",
+            "hr",
+            "legal"
+          ],
+          "max_delegation_depth": 2,
+          "compliance_tier": "professional"
+        },
+        "model_attestation": {
+          "mode": "api_hosted",
+          "model_id": "claude-sonnet-4-6",
+          "provider": "anthropic",
+          "provider_attestation": null
+        },
+        "system_prompt_hash": "9476e4eea7399250a9c4d0d8434685a3de54d8c2eedd4e1c1f2e38ee066452bf",
+        "tool_manifest": [
+          {
+            "tool_id": "zendesk",
+            "tool_category": "ticket_system",
+            "allowed_actions": [
+              "read_ticket",
+              "update_ticket",
+              "close_ticket"
+            ],
+            "data_scope": "tickets/",
+            "rate_limit": {
+              "calls_per_minute": 60,
+              "calls_per_day": 5000
+            }
+          },
+          {
+            "tool_id": "email",
+            "tool_category": "email",
+            "allowed_actions": [
+              "send"
+            ],
+            "data_scope": "outbound/",
+            "rate_limit": {
+              "calls_per_minute": 10,
+              "calls_per_day": 200
+            }
+          }
+        ],
+        "sequence_rules": [
+          {
+            "rule_id": "no-read-then-external-send",
+            "description": "Prevent reading tickets then sending external email",
+            "pattern": [
+              "zendesk:read_ticket",
+              "email:send"
+            ],
+            "window": 5,
+            "on_match": "escalate",
+            "unless": null
+          }
+        ],
+        "data_classification": [
+          "customer_pii",
+          "support_tickets"
+        ],
+        "output_restrictions": {
+          "no_external_domains": true
+        },
+        "escalation_triggers": [
+          {
+            "id": "legal_matter",
+            "pattern": "legal_matter"
+          }
+        ],
+        "not_before": "2026-01-01T00:00:00Z",
+        "not_after": "2026-12-31T23:59:59Z"
+      },
+      "kid": "rfc8032_tv1",
+      "issued_at": "2026-01-15T09:00:00Z",
+      "expected_intent_id": "intentid:v1:3fe52514da758e2c37d514c354545a863978cdbf1bcd9664208b021635020321",
+      "expected_signature": "0V_zfzGXhYnb0CWoWjVwisxNr-mE_ji4cYS6ND5VdOl0F3RJjp_mEbg1OoMJEAeeQa-240mWlfgcEWcLHJ23Bw",
+      "note": "Must equal SIGN-1 exactly. Proves deterministic canonicalization + signing."
+    }
+  ],
+  "tv_verification": [
+    {
+      "id": "VER-1",
+      "description": "Valid contract \u2014 all checks pass",
+      "contract": {
+        "org_id": "acme_corp",
+        "user_id": "john.doe@acme.com",
+        "parent_agent_id": null,
+        "declared_purpose": "Process and respond to customer support tickets",
+        "goal_structure": {
+          "type": "task_completion",
+          "domain": "customer_support",
+          "scope": "read_write",
+          "targets": [
+            "tickets",
+            "customer_records"
+          ],
+          "forbidden_domains": [
+            "finance",
+            "hr",
+            "legal"
+          ],
+          "max_delegation_depth": 2,
+          "compliance_tier": "professional"
+        },
+        "model_attestation": {
+          "mode": "api_hosted",
+          "model_id": "claude-sonnet-4-6",
+          "provider": "anthropic",
+          "provider_attestation": null
+        },
+        "system_prompt_hash": "9476e4eea7399250a9c4d0d8434685a3de54d8c2eedd4e1c1f2e38ee066452bf",
+        "tool_manifest": [
+          {
+            "tool_id": "zendesk",
+            "tool_category": "ticket_system",
+            "allowed_actions": [
+              "read_ticket",
+              "update_ticket",
+              "close_ticket"
+            ],
+            "data_scope": "tickets/",
+            "rate_limit": {
+              "calls_per_minute": 60,
+              "calls_per_day": 5000
+            }
+          },
+          {
+            "tool_id": "email",
+            "tool_category": "email",
+            "allowed_actions": [
+              "send"
+            ],
+            "data_scope": "outbound/",
+            "rate_limit": {
+              "calls_per_minute": 10,
+              "calls_per_day": 200
+            }
+          }
+        ],
+        "sequence_rules": [
+          {
+            "rule_id": "no-read-then-external-send",
+            "description": "Prevent reading tickets then sending external email",
+            "pattern": [
+              "zendesk:read_ticket",
+              "email:send"
+            ],
+            "window": 5,
+            "on_match": "escalate",
+            "unless": null
+          }
+        ],
+        "data_classification": [
+          "customer_pii",
+          "support_tickets"
+        ],
+        "output_restrictions": {
+          "no_external_domains": true
+        },
+        "escalation_triggers": [
+          {
+            "id": "legal_matter",
+            "pattern": "legal_matter"
+          }
+        ],
+        "not_before": "2026-01-01T00:00:00Z",
+        "not_after": "2026-12-31T23:59:59Z",
+        "issued_at": "2026-01-15T09:00:00Z",
+        "kid": "rfc8032_tv1",
+        "signature": "0V_zfzGXhYnb0CWoWjVwisxNr-mE_ji4cYS6ND5VdOl0F3RJjp_mEbg1OoMJEAeeQa-240mWlfgcEWcLHJ23Bw",
+        "intent_id": "intentid:v1:3fe52514da758e2c37d514c354545a863978cdbf1bcd9664208b021635020321"
+      },
+      "expected_valid": true,
+      "expected_reason": "valid",
+      "eval_time": "2026-03-01T12:00:00Z"
+    },
+    {
+      "id": "VER-2",
+      "description": "Tampered content \u2014 intent_id mismatch detected",
+      "contract": {
+        "org_id": "acme_corp",
+        "user_id": "john.doe@acme.com",
+        "parent_agent_id": null,
+        "declared_purpose": "ATTACKER MODIFIED",
+        "goal_structure": {
+          "type": "task_completion",
+          "domain": "customer_support",
+          "scope": "read_write",
+          "targets": [
+            "tickets",
+            "customer_records"
+          ],
+          "forbidden_domains": [
+            "finance",
+            "hr",
+            "legal"
+          ],
+          "max_delegation_depth": 2,
+          "compliance_tier": "professional"
+        },
+        "model_attestation": {
+          "mode": "api_hosted",
+          "model_id": "claude-sonnet-4-6",
+          "provider": "anthropic",
+          "provider_attestation": null
+        },
+        "system_prompt_hash": "9476e4eea7399250a9c4d0d8434685a3de54d8c2eedd4e1c1f2e38ee066452bf",
+        "tool_manifest": [
+          {
+            "tool_id": "zendesk",
+            "tool_category": "ticket_system",
+            "allowed_actions": [
+              "read_ticket",
+              "update_ticket",
+              "close_ticket"
+            ],
+            "data_scope": "tickets/",
+            "rate_limit": {
+              "calls_per_minute": 60,
+              "calls_per_day": 5000
+            }
+          },
+          {
+            "tool_id": "email",
+            "tool_category": "email",
+            "allowed_actions": [
+              "send"
+            ],
+            "data_scope": "outbound/",
+            "rate_limit": {
+              "calls_per_minute": 10,
+              "calls_per_day": 200
+            }
+          }
+        ],
+        "sequence_rules": [
+          {
+            "rule_id": "no-read-then-external-send",
+            "description": "Prevent reading tickets then sending external email",
+            "pattern": [
+              "zendesk:read_ticket",
+              "email:send"
+            ],
+            "window": 5,
+            "on_match": "escalate",
+            "unless": null
+          }
+        ],
+        "data_classification": [
+          "customer_pii",
+          "support_tickets"
+        ],
+        "output_restrictions": {
+          "no_external_domains": true
+        },
+        "escalation_triggers": [
+          {
+            "id": "legal_matter",
+            "pattern": "legal_matter"
+          }
+        ],
+        "not_before": "2026-01-01T00:00:00Z",
+        "not_after": "2026-12-31T23:59:59Z",
+        "issued_at": "2026-01-15T09:00:00Z",
+        "kid": "rfc8032_tv1",
+        "signature": "0V_zfzGXhYnb0CWoWjVwisxNr-mE_ji4cYS6ND5VdOl0F3RJjp_mEbg1OoMJEAeeQa-240mWlfgcEWcLHJ23Bw",
+        "intent_id": "intentid:v1:3fe52514da758e2c37d514c354545a863978cdbf1bcd9664208b021635020321"
+      },
+      "expected_valid": false,
+      "expected_reason_prefix": "intent_id_mismatch",
+      "eval_time": "2026-03-01T12:00:00Z",
+      "note": "Any field change breaks the IntentID hash, caught before sig check"
+    },
+    {
+      "id": "VER-3",
+      "description": "Expired contract \u2014 not_after in the past",
+      "contract": {
+        "org_id": "acme_corp",
+        "user_id": "john.doe@acme.com",
+        "parent_agent_id": null,
+        "declared_purpose": "Process and respond to customer support tickets",
+        "goal_structure": {
+          "type": "task_completion",
+          "domain": "customer_support",
+          "scope": "read_write",
+          "targets": [
+            "tickets",
+            "customer_records"
+          ],
+          "forbidden_domains": [
+            "finance",
+            "hr",
+            "legal"
+          ],
+          "max_delegation_depth": 2,
+          "compliance_tier": "professional"
+        },
+        "model_attestation": {
+          "mode": "api_hosted",
+          "model_id": "claude-sonnet-4-6",
+          "provider": "anthropic",
+          "provider_attestation": null
+        },
+        "system_prompt_hash": "9476e4eea7399250a9c4d0d8434685a3de54d8c2eedd4e1c1f2e38ee066452bf",
+        "tool_manifest": [
+          {
+            "tool_id": "zendesk",
+            "tool_category": "ticket_system",
+            "allowed_actions": [
+              "read_ticket",
+              "update_ticket",
+              "close_ticket"
+            ],
+            "data_scope": "tickets/",
+            "rate_limit": {
+              "calls_per_minute": 60,
+              "calls_per_day": 5000
+            }
+          },
+          {
+            "tool_id": "email",
+            "tool_category": "email",
+            "allowed_actions": [
+              "send"
+            ],
+            "data_scope": "outbound/",
+            "rate_limit": {
+              "calls_per_minute": 10,
+              "calls_per_day": 200
+            }
+          }
+        ],
+        "sequence_rules": [
+          {
+            "rule_id": "no-read-then-external-send",
+            "description": "Prevent reading tickets then sending external email",
+            "pattern": [
+              "zendesk:read_ticket",
+              "email:send"
+            ],
+            "window": 5,
+            "on_match": "escalate",
+            "unless": null
+          }
+        ],
+        "data_classification": [
+          "customer_pii",
+          "support_tickets"
+        ],
+        "output_restrictions": {
+          "no_external_domains": true
+        },
+        "escalation_triggers": [
+          {
+            "id": "legal_matter",
+            "pattern": "legal_matter"
+          }
+        ],
+        "not_before": "2026-01-01T00:00:00Z",
+        "not_after": "2026-02-01T00:00:00Z",
+        "issued_at": "2026-01-15T09:00:00Z",
+        "kid": "rfc8032_tv1",
+        "signature": "gGkUX-raeXpXbqtJ0Fz8lYgsdR3lryADUE1udummbq1LUZuzBUGw44OaBIykdXu2E60FhhY87w9_SYn0l7x1Bw",
+        "intent_id": "intentid:v1:f1a5435bea072f75016e4439f49c64e69771a6c8c3a429dbd1ee2155871333b4"
+      },
+      "expected_valid": false,
+      "expected_reason_prefix": "expired",
+      "eval_time": "2026-03-01T12:00:00Z"
+    },
+    {
+      "id": "VER-4",
+      "description": "Not yet valid \u2014 not_before in the future",
+      "contract": {
+        "org_id": "acme_corp",
+        "user_id": "john.doe@acme.com",
+        "parent_agent_id": null,
+        "declared_purpose": "Process and respond to customer support tickets",
+        "goal_structure": {
+          "type": "task_completion",
+          "domain": "customer_support",
+          "scope": "read_write",
+          "targets": [
+            "tickets",
+            "customer_records"
+          ],
+          "forbidden_domains": [
+            "finance",
+            "hr",
+            "legal"
+          ],
+          "max_delegation_depth": 2,
+          "compliance_tier": "professional"
+        },
+        "model_attestation": {
+          "mode": "api_hosted",
+          "model_id": "claude-sonnet-4-6",
+          "provider": "anthropic",
+          "provider_attestation": null
+        },
+        "system_prompt_hash": "9476e4eea7399250a9c4d0d8434685a3de54d8c2eedd4e1c1f2e38ee066452bf",
+        "tool_manifest": [
+          {
+            "tool_id": "zendesk",
+            "tool_category": "ticket_system",
+            "allowed_actions": [
+              "read_ticket",
+              "update_ticket",
+              "close_ticket"
+            ],
+            "data_scope": "tickets/",
+            "rate_limit": {
+              "calls_per_minute": 60,
+              "calls_per_day": 5000
+            }
+          },
+          {
+            "tool_id": "email",
+            "tool_category": "email",
+            "allowed_actions": [
+              "send"
+            ],
+            "data_scope": "outbound/",
+            "rate_limit": {
+              "calls_per_minute": 10,
+              "calls_per_day": 200
+            }
+          }
+        ],
+        "sequence_rules": [
+          {
+            "rule_id": "no-read-then-external-send",
+            "description": "Prevent reading tickets then sending external email",
+            "pattern": [
+              "zendesk:read_ticket",
+              "email:send"
+            ],
+            "window": 5,
+            "on_match": "escalate",
+            "unless": null
+          }
+        ],
+        "data_classification": [
+          "customer_pii",
+          "support_tickets"
+        ],
+        "output_restrictions": {
+          "no_external_domains": true
+        },
+        "escalation_triggers": [
+          {
+            "id": "legal_matter",
+            "pattern": "legal_matter"
+          }
+        ],
+        "not_before": "2026-06-01T00:00:00Z",
+        "not_after": "2026-12-31T23:59:59Z",
+        "issued_at": "2026-01-15T09:00:00Z",
+        "kid": "rfc8032_tv1",
+        "signature": "UMC1LMo7mS0y73zNXWpuUku6Ln4FpmYEZCuJodcaGQ-Hk9xpODK3JzeT9cfTlw5We3Savbr31Iw-gL-0bGa1Dg",
+        "intent_id": "intentid:v1:4e6fddd57121f435cd57e422fd11ea249f49a0edf0a1a66177515d11179da72c"
+      },
+      "expected_valid": false,
+      "expected_reason_prefix": "not_yet_valid",
+      "eval_time": "2026-03-01T12:00:00Z"
+    },
+    {
+      "id": "VER-5",
+      "description": "Wrong public key \u2014 signature mismatch",
+      "contract": {
+        "org_id": "acme_corp",
+        "user_id": "john.doe@acme.com",
+        "parent_agent_id": null,
+        "declared_purpose": "Process and respond to customer support tickets",
+        "goal_structure": {
+          "type": "task_completion",
+          "domain": "customer_support",
+          "scope": "read_write",
+          "targets": [
+            "tickets",
+            "customer_records"
+          ],
+          "forbidden_domains": [
+            "finance",
+            "hr",
+            "legal"
+          ],
+          "max_delegation_depth": 2,
+          "compliance_tier": "professional"
+        },
+        "model_attestation": {
+          "mode": "api_hosted",
+          "model_id": "claude-sonnet-4-6",
+          "provider": "anthropic",
+          "provider_attestation": null
+        },
+        "system_prompt_hash": "9476e4eea7399250a9c4d0d8434685a3de54d8c2eedd4e1c1f2e38ee066452bf",
+        "tool_manifest": [
+          {
+            "tool_id": "zendesk",
+            "tool_category": "ticket_system",
+            "allowed_actions": [
+              "read_ticket",
+              "update_ticket",
+              "close_ticket"
+            ],
+            "data_scope": "tickets/",
+            "rate_limit": {
+              "calls_per_minute": 60,
+              "calls_per_day": 5000
+            }
+          },
+          {
+            "tool_id": "email",
+            "tool_category": "email",
+            "allowed_actions": [
+              "send"
+            ],
+            "data_scope": "outbound/",
+            "rate_limit": {
+              "calls_per_minute": 10,
+              "calls_per_day": 200
+            }
+          }
+        ],
+        "sequence_rules": [
+          {
+            "rule_id": "no-read-then-external-send",
+            "description": "Prevent reading tickets then sending external email",
+            "pattern": [
+              "zendesk:read_ticket",
+              "email:send"
+            ],
+            "window": 5,
+            "on_match": "escalate",
+            "unless": null
+          }
+        ],
+        "data_classification": [
+          "customer_pii",
+          "support_tickets"
+        ],
+        "output_restrictions": {
+          "no_external_domains": true
+        },
+        "escalation_triggers": [
+          {
+            "id": "legal_matter",
+            "pattern": "legal_matter"
+          }
+        ],
+        "not_before": "2026-01-01T00:00:00Z",
+        "not_after": "2026-12-31T23:59:59Z",
+        "issued_at": "2026-01-15T09:00:00Z",
+        "kid": "rfc8032_tv1",
+        "signature": "0V_zfzGXhYnb0CWoWjVwisxNr-mE_ji4cYS6ND5VdOl0F3RJjp_mEbg1OoMJEAeeQa-240mWlfgcEWcLHJ23Bw",
+        "intent_id": "intentid:v1:3fe52514da758e2c37d514c354545a863978cdbf1bcd9664208b021635020321"
+      },
+      "expected_valid": false,
+      "expected_reason_prefix": "invalid_signature",
+      "eval_time": "2026-03-01T12:00:00Z",
+      "wrong_key": true,
+      "use_alt_public_key_hex": "c61e278621027598ce2ee4cea835ec4a485b781fa89b97ab754fb7676d319ac2"
+    }
+  ],
+  "tv_delegation": [
+    {
+      "id": "DEL-1",
+      "description": "Valid delegation \u2014 child is proper subset",
+      "child": {
+        "org_id": "acme_corp",
+        "user_id": "john.doe@acme.com",
+        "parent_agent_id": "agent:acme_corp:john.doe%40acme.com:intentid:v1:c74b86f0c6decc74091a2395c223c6bd2801cdfa66facb5f556c65c6796f90e6",
+        "declared_purpose": "Read customer support tickets only",
+        "goal_structure": {
+          "type": "task_completion",
+          "domain": "customer_support",
+          "scope": "read_only",
+          "targets": [
+            "tickets"
+          ],
+          "forbidden_domains": [
+            "finance",
+            "hr",
+            "legal"
+          ],
+          "max_delegation_depth": 1,
+          "compliance_tier": "professional"
+        },
+        "model_attestation": {
+          "mode": "api_hosted",
+          "model_id": "claude-sonnet-4-6",
+          "provider": "anthropic",
+          "provider_attestation": null
+        },
+        "system_prompt_hash": "fb99b2f517c01e0955ee7ca2e3467f130ff29510f10dc731530555281c2bebd1",
+        "tool_manifest": [
+          {
+            "tool_id": "zendesk",
+            "tool_category": "ticket_system",
+            "allowed_actions": [
+              "read_ticket"
+            ],
+            "data_scope": "tickets/",
+            "rate_limit": {
+              "calls_per_minute": 30
+            }
+          }
+        ],
+        "sequence_rules": [],
+        "data_classification": [
+          "support_tickets"
+        ],
+        "output_restrictions": {
+          "no_external_domains": true
+        },
+        "escalation_triggers": [],
+        "not_before": "2026-01-01T00:00:00Z",
+        "not_after": "2026-12-31T23:59:59Z"
+      },
+      "parent": {
+        "org_id": "acme_corp",
+        "user_id": "john.doe@acme.com",
+        "parent_agent_id": null,
+        "declared_purpose": "Process and respond to customer support tickets",
+        "goal_structure": {
+          "type": "task_completion",
+          "domain": "customer_support",
+          "scope": "read_write",
+          "targets": [
+            "tickets",
+            "customer_records"
+          ],
+          "forbidden_domains": [
+            "finance",
+            "hr",
+            "legal"
+          ],
+          "max_delegation_depth": 2,
+          "compliance_tier": "professional"
+        },
+        "model_attestation": {
+          "mode": "api_hosted",
+          "model_id": "claude-sonnet-4-6",
+          "provider": "anthropic",
+          "provider_attestation": null
+        },
+        "system_prompt_hash": "9476e4eea7399250a9c4d0d8434685a3de54d8c2eedd4e1c1f2e38ee066452bf",
+        "tool_manifest": [
+          {
+            "tool_id": "zendesk",
+            "tool_category": "ticket_system",
+            "allowed_actions": [
+              "read_ticket",
+              "update_ticket",
+              "close_ticket"
+            ],
+            "data_scope": "tickets/",
+            "rate_limit": {
+              "calls_per_minute": 60,
+              "calls_per_day": 5000
+            }
+          },
+          {
+            "tool_id": "email",
+            "tool_category": "email",
+            "allowed_actions": [
+              "send"
+            ],
+            "data_scope": "outbound/",
+            "rate_limit": {
+              "calls_per_minute": 10,
+              "calls_per_day": 200
+            }
+          }
+        ],
+        "sequence_rules": [
+          {
+            "rule_id": "no-read-then-external-send",
+            "description": "Prevent reading tickets then sending external email",
+            "pattern": [
+              "zendesk:read_ticket",
+              "email:send"
+            ],
+            "window": 5,
+            "on_match": "escalate",
+            "unless": null
+          }
+        ],
+        "data_classification": [
+          "customer_pii",
+          "support_tickets"
+        ],
+        "output_restrictions": {
+          "no_external_domains": true
+        },
+        "escalation_triggers": [
+          {
+            "id": "legal_matter",
+            "pattern": "legal_matter"
+          }
+        ],
+        "not_before": "2026-01-01T00:00:00Z",
+        "not_after": "2026-12-31T23:59:59Z"
+      },
+      "expected_valid": true,
+      "expected_reason": "valid"
+    },
+    {
+      "id": "DEL-2",
+      "description": "Action exceeds parent \u2014 delete_ticket not in parent",
+      "child": {
+        "org_id": "acme_corp",
+        "user_id": "john.doe@acme.com",
+        "parent_agent_id": "agent:acme_corp:john.doe%40acme.com:intentid:v1:c74b86f0c6decc74091a2395c223c6bd2801cdfa66facb5f556c65c6796f90e6",
+        "declared_purpose": "Read customer support tickets only",
+        "goal_structure": {
+          "type": "task_completion",
+          "domain": "customer_support",
+          "scope": "read_only",
+          "targets": [
+            "tickets"
+          ],
+          "forbidden_domains": [
+            "finance",
+            "hr",
+            "legal"
+          ],
+          "max_delegation_depth": 1,
+          "compliance_tier": "professional"
+        },
+        "model_attestation": {
+          "mode": "api_hosted",
+          "model_id": "claude-sonnet-4-6",
+          "provider": "anthropic",
+          "provider_attestation": null
+        },
+        "system_prompt_hash": "fb99b2f517c01e0955ee7ca2e3467f130ff29510f10dc731530555281c2bebd1",
+        "tool_manifest": [
+          {
+            "tool_id": "zendesk",
+            "tool_category": "ticket_system",
+            "allowed_actions": [
+              "read_ticket",
+              "delete_ticket"
+            ],
+            "data_scope": "tickets/",
+            "rate_limit": {
+              "calls_per_minute": 30
+            }
+          }
+        ],
+        "sequence_rules": [],
+        "data_classification": [
+          "support_tickets"
+        ],
+        "output_restrictions": {
+          "no_external_domains": true
+        },
+        "escalation_triggers": [],
+        "not_before": "2026-01-01T00:00:00Z",
+        "not_after": "2026-12-31T23:59:59Z"
+      },
+      "parent": {
+        "org_id": "acme_corp",
+        "user_id": "john.doe@acme.com",
+        "parent_agent_id": null,
+        "declared_purpose": "Process and respond to customer support tickets",
+        "goal_structure": {
+          "type": "task_completion",
+          "domain": "customer_support",
+          "scope": "read_write",
+          "targets": [
+            "tickets",
+            "customer_records"
+          ],
+          "forbidden_domains": [
+            "finance",
+            "hr",
+            "legal"
+          ],
+          "max_delegation_depth": 2,
+          "compliance_tier": "professional"
+        },
+        "model_attestation": {
+          "mode": "api_hosted",
+          "model_id": "claude-sonnet-4-6",
+          "provider": "anthropic",
+          "provider_attestation": null
+        },
+        "system_prompt_hash": "9476e4eea7399250a9c4d0d8434685a3de54d8c2eedd4e1c1f2e38ee066452bf",
+        "tool_manifest": [
+          {
+            "tool_id": "zendesk",
+            "tool_category": "ticket_system",
+            "allowed_actions": [
+              "read_ticket",
+              "update_ticket",
+              "close_ticket"
+            ],
+            "data_scope": "tickets/",
+            "rate_limit": {
+              "calls_per_minute": 60,
+              "calls_per_day": 5000
+            }
+          },
+          {
+            "tool_id": "email",
+            "tool_category": "email",
+            "allowed_actions": [
+              "send"
+            ],
+            "data_scope": "outbound/",
+            "rate_limit": {
+              "calls_per_minute": 10,
+              "calls_per_day": 200
+            }
+          }
+        ],
+        "sequence_rules": [
+          {
+            "rule_id": "no-read-then-external-send",
+            "description": "Prevent reading tickets then sending external email",
+            "pattern": [
+              "zendesk:read_ticket",
+              "email:send"
+            ],
+            "window": 5,
+            "on_match": "escalate",
+            "unless": null
+          }
+        ],
+        "data_classification": [
+          "customer_pii",
+          "support_tickets"
+        ],
+        "output_restrictions": {
+          "no_external_domains": true
+        },
+        "escalation_triggers": [
+          {
+            "id": "legal_matter",
+            "pattern": "legal_matter"
+          }
+        ],
+        "not_before": "2026-01-01T00:00:00Z",
+        "not_after": "2026-12-31T23:59:59Z"
+      },
+      "expected_valid": false,
+      "expected_reason_prefix": "actions_exceed_parent"
+    },
+    {
+      "id": "DEL-3",
+      "description": "Tool not in parent manifest \u2014 payroll_system",
+      "child": {
+        "org_id": "acme_corp",
+        "user_id": "john.doe@acme.com",
+        "parent_agent_id": "agent:acme_corp:john.doe%40acme.com:intentid:v1:c74b86f0c6decc74091a2395c223c6bd2801cdfa66facb5f556c65c6796f90e6",
+        "declared_purpose": "Read customer support tickets only",
+        "goal_structure": {
+          "type": "task_completion",
+          "domain": "customer_support",
+          "scope": "read_only",
+          "targets": [
+            "tickets"
+          ],
+          "forbidden_domains": [
+            "finance",
+            "hr",
+            "legal"
+          ],
+          "max_delegation_depth": 1,
+          "compliance_tier": "professional"
+        },
+        "model_attestation": {
+          "mode": "api_hosted",
+          "model_id": "claude-sonnet-4-6",
+          "provider": "anthropic",
+          "provider_attestation": null
+        },
+        "system_prompt_hash": "fb99b2f517c01e0955ee7ca2e3467f130ff29510f10dc731530555281c2bebd1",
+        "tool_manifest": [
+          {
+            "tool_id": "zendesk",
+            "tool_category": "ticket_system",
+            "allowed_actions": [
+              "read_ticket"
+            ],
+            "data_scope": "tickets/",
+            "rate_limit": {
+              "calls_per_minute": 30
+            }
+          },
+          {
+            "tool_id": "payroll_system",
+            "tool_category": "payroll",
+            "allowed_actions": [
+              "read"
+            ],
+            "data_scope": "payroll/",
+            "rate_limit": {
+              "calls_per_minute": 5
+            }
+          }
+        ],
+        "sequence_rules": [],
+        "data_classification": [
+          "support_tickets"
+        ],
+        "output_restrictions": {
+          "no_external_domains": true
+        },
+        "escalation_triggers": [],
+        "not_before": "2026-01-01T00:00:00Z",
+        "not_after": "2026-12-31T23:59:59Z"
+      },
+      "parent": {
+        "org_id": "acme_corp",
+        "user_id": "john.doe@acme.com",
+        "parent_agent_id": null,
+        "declared_purpose": "Process and respond to customer support tickets",
+        "goal_structure": {
+          "type": "task_completion",
+          "domain": "customer_support",
+          "scope": "read_write",
+          "targets": [
+            "tickets",
+            "customer_records"
+          ],
+          "forbidden_domains": [
+            "finance",
+            "hr",
+            "legal"
+          ],
+          "max_delegation_depth": 2,
+          "compliance_tier": "professional"
+        },
+        "model_attestation": {
+          "mode": "api_hosted",
+          "model_id": "claude-sonnet-4-6",
+          "provider": "anthropic",
+          "provider_attestation": null
+        },
+        "system_prompt_hash": "9476e4eea7399250a9c4d0d8434685a3de54d8c2eedd4e1c1f2e38ee066452bf",
+        "tool_manifest": [
+          {
+            "tool_id": "zendesk",
+            "tool_category": "ticket_system",
+            "allowed_actions": [
+              "read_ticket",
+              "update_ticket",
+              "close_ticket"
+            ],
+            "data_scope": "tickets/",
+            "rate_limit": {
+              "calls_per_minute": 60,
+              "calls_per_day": 5000
+            }
+          },
+          {
+            "tool_id": "email",
+            "tool_category": "email",
+            "allowed_actions": [
+              "send"
+            ],
+            "data_scope": "outbound/",
+            "rate_limit": {
+              "calls_per_minute": 10,
+              "calls_per_day": 200
+            }
+          }
+        ],
+        "sequence_rules": [
+          {
+            "rule_id": "no-read-then-external-send",
+            "description": "Prevent reading tickets then sending external email",
+            "pattern": [
+              "zendesk:read_ticket",
+              "email:send"
+            ],
+            "window": 5,
+            "on_match": "escalate",
+            "unless": null
+          }
+        ],
+        "data_classification": [
+          "customer_pii",
+          "support_tickets"
+        ],
+        "output_restrictions": {
+          "no_external_domains": true
+        },
+        "escalation_triggers": [
+          {
+            "id": "legal_matter",
+            "pattern": "legal_matter"
+          }
+        ],
+        "not_before": "2026-01-01T00:00:00Z",
+        "not_after": "2026-12-31T23:59:59Z"
+      },
+      "expected_valid": false,
+      "expected_reason_prefix": "tool_not_in_parent"
+    },
+    {
+      "id": "DEL-4",
+      "description": "not_after exceeds parent temporal bound",
+      "child": {
+        "org_id": "acme_corp",
+        "user_id": "john.doe@acme.com",
+        "parent_agent_id": "agent:acme_corp:john.doe%40acme.com:intentid:v1:c74b86f0c6decc74091a2395c223c6bd2801cdfa66facb5f556c65c6796f90e6",
+        "declared_purpose": "Read customer support tickets only",
+        "goal_structure": {
+          "type": "task_completion",
+          "domain": "customer_support",
+          "scope": "read_only",
+          "targets": [
+            "tickets"
+          ],
+          "forbidden_domains": [
+            "finance",
+            "hr",
+            "legal"
+          ],
+          "max_delegation_depth": 1,
+          "compliance_tier": "professional"
+        },
+        "model_attestation": {
+          "mode": "api_hosted",
+          "model_id": "claude-sonnet-4-6",
+          "provider": "anthropic",
+          "provider_attestation": null
+        },
+        "system_prompt_hash": "fb99b2f517c01e0955ee7ca2e3467f130ff29510f10dc731530555281c2bebd1",
+        "tool_manifest": [
+          {
+            "tool_id": "zendesk",
+            "tool_category": "ticket_system",
+            "allowed_actions": [
+              "read_ticket"
+            ],
+            "data_scope": "tickets/",
+            "rate_limit": {
+              "calls_per_minute": 30
+            }
+          }
+        ],
+        "sequence_rules": [],
+        "data_classification": [
+          "support_tickets"
+        ],
+        "output_restrictions": {
+          "no_external_domains": true
+        },
+        "escalation_triggers": [],
+        "not_before": "2026-01-01T00:00:00Z",
+        "not_after": "2027-12-31T23:59:59Z"
+      },
+      "parent": {
+        "org_id": "acme_corp",
+        "user_id": "john.doe@acme.com",
+        "parent_agent_id": null,
+        "declared_purpose": "Process and respond to customer support tickets",
+        "goal_structure": {
+          "type": "task_completion",
+          "domain": "customer_support",
+          "scope": "read_write",
+          "targets": [
+            "tickets",
+            "customer_records"
+          ],
+          "forbidden_domains": [
+            "finance",
+            "hr",
+            "legal"
+          ],
+          "max_delegation_depth": 2,
+          "compliance_tier": "professional"
+        },
+        "model_attestation": {
+          "mode": "api_hosted",
+          "model_id": "claude-sonnet-4-6",
+          "provider": "anthropic",
+          "provider_attestation": null
+        },
+        "system_prompt_hash": "9476e4eea7399250a9c4d0d8434685a3de54d8c2eedd4e1c1f2e38ee066452bf",
+        "tool_manifest": [
+          {
+            "tool_id": "zendesk",
+            "tool_category": "ticket_system",
+            "allowed_actions": [
+              "read_ticket",
+              "update_ticket",
+              "close_ticket"
+            ],
+            "data_scope": "tickets/",
+            "rate_limit": {
+              "calls_per_minute": 60,
+              "calls_per_day": 5000
+            }
+          },
+          {
+            "tool_id": "email",
+            "tool_category": "email",
+            "allowed_actions": [
+              "send"
+            ],
+            "data_scope": "outbound/",
+            "rate_limit": {
+              "calls_per_minute": 10,
+              "calls_per_day": 200
+            }
+          }
+        ],
+        "sequence_rules": [
+          {
+            "rule_id": "no-read-then-external-send",
+            "description": "Prevent reading tickets then sending external email",
+            "pattern": [
+              "zendesk:read_ticket",
+              "email:send"
+            ],
+            "window": 5,
+            "on_match": "escalate",
+            "unless": null
+          }
+        ],
+        "data_classification": [
+          "customer_pii",
+          "support_tickets"
+        ],
+        "output_restrictions": {
+          "no_external_domains": true
+        },
+        "escalation_triggers": [
+          {
+            "id": "legal_matter",
+            "pattern": "legal_matter"
+          }
+        ],
+        "not_before": "2026-01-01T00:00:00Z",
+        "not_after": "2026-12-31T23:59:59Z"
+      },
+      "expected_valid": false,
+      "expected_reason_prefix": "child_not_after_exceeds_parent"
+    },
+    {
+      "id": "DEL-5",
+      "description": "User_id mismatch \u2014 principal preservation violated",
+      "child": {
+        "org_id": "acme_corp",
+        "user_id": "attacker@evil.com",
+        "parent_agent_id": "agent:acme_corp:john.doe%40acme.com:intentid:v1:c74b86f0c6decc74091a2395c223c6bd2801cdfa66facb5f556c65c6796f90e6",
+        "declared_purpose": "Read customer support tickets only",
+        "goal_structure": {
+          "type": "task_completion",
+          "domain": "customer_support",
+          "scope": "read_only",
+          "targets": [
+            "tickets"
+          ],
+          "forbidden_domains": [
+            "finance",
+            "hr",
+            "legal"
+          ],
+          "max_delegation_depth": 1,
+          "compliance_tier": "professional"
+        },
+        "model_attestation": {
+          "mode": "api_hosted",
+          "model_id": "claude-sonnet-4-6",
+          "provider": "anthropic",
+          "provider_attestation": null
+        },
+        "system_prompt_hash": "fb99b2f517c01e0955ee7ca2e3467f130ff29510f10dc731530555281c2bebd1",
+        "tool_manifest": [
+          {
+            "tool_id": "zendesk",
+            "tool_category": "ticket_system",
+            "allowed_actions": [
+              "read_ticket"
+            ],
+            "data_scope": "tickets/",
+            "rate_limit": {
+              "calls_per_minute": 30
+            }
+          }
+        ],
+        "sequence_rules": [],
+        "data_classification": [
+          "support_tickets"
+        ],
+        "output_restrictions": {
+          "no_external_domains": true
+        },
+        "escalation_triggers": [],
+        "not_before": "2026-01-01T00:00:00Z",
+        "not_after": "2026-12-31T23:59:59Z"
+      },
+      "parent": {
+        "org_id": "acme_corp",
+        "user_id": "john.doe@acme.com",
+        "parent_agent_id": null,
+        "declared_purpose": "Process and respond to customer support tickets",
+        "goal_structure": {
+          "type": "task_completion",
+          "domain": "customer_support",
+          "scope": "read_write",
+          "targets": [
+            "tickets",
+            "customer_records"
+          ],
+          "forbidden_domains": [
+            "finance",
+            "hr",
+            "legal"
+          ],
+          "max_delegation_depth": 2,
+          "compliance_tier": "professional"
+        },
+        "model_attestation": {
+          "mode": "api_hosted",
+          "model_id": "claude-sonnet-4-6",
+          "provider": "anthropic",
+          "provider_attestation": null
+        },
+        "system_prompt_hash": "9476e4eea7399250a9c4d0d8434685a3de54d8c2eedd4e1c1f2e38ee066452bf",
+        "tool_manifest": [
+          {
+            "tool_id": "zendesk",
+            "tool_category": "ticket_system",
+            "allowed_actions": [
+              "read_ticket",
+              "update_ticket",
+              "close_ticket"
+            ],
+            "data_scope": "tickets/",
+            "rate_limit": {
+              "calls_per_minute": 60,
+              "calls_per_day": 5000
+            }
+          },
+          {
+            "tool_id": "email",
+            "tool_category": "email",
+            "allowed_actions": [
+              "send"
+            ],
+            "data_scope": "outbound/",
+            "rate_limit": {
+              "calls_per_minute": 10,
+              "calls_per_day": 200
+            }
+          }
+        ],
+        "sequence_rules": [
+          {
+            "rule_id": "no-read-then-external-send",
+            "description": "Prevent reading tickets then sending external email",
+            "pattern": [
+              "zendesk:read_ticket",
+              "email:send"
+            ],
+            "window": 5,
+            "on_match": "escalate",
+            "unless": null
+          }
+        ],
+        "data_classification": [
+          "customer_pii",
+          "support_tickets"
+        ],
+        "output_restrictions": {
+          "no_external_domains": true
+        },
+        "escalation_triggers": [
+          {
+            "id": "legal_matter",
+            "pattern": "legal_matter"
+          }
+        ],
+        "not_before": "2026-01-01T00:00:00Z",
+        "not_after": "2026-12-31T23:59:59Z"
+      },
+      "expected_valid": false,
+      "expected_reason_prefix": "principal_mismatch"
+    },
+    {
+      "id": "DEL-6",
+      "description": "Rate limit exceeds parent \u2014 120 > 60 calls/min",
+      "child": {
+        "org_id": "acme_corp",
+        "user_id": "john.doe@acme.com",
+        "parent_agent_id": "agent:acme_corp:john.doe%40acme.com:intentid:v1:c74b86f0c6decc74091a2395c223c6bd2801cdfa66facb5f556c65c6796f90e6",
+        "declared_purpose": "Read customer support tickets only",
+        "goal_structure": {
+          "type": "task_completion",
+          "domain": "customer_support",
+          "scope": "read_only",
+          "targets": [
+            "tickets"
+          ],
+          "forbidden_domains": [
+            "finance",
+            "hr",
+            "legal"
+          ],
+          "max_delegation_depth": 1,
+          "compliance_tier": "professional"
+        },
+        "model_attestation": {
+          "mode": "api_hosted",
+          "model_id": "claude-sonnet-4-6",
+          "provider": "anthropic",
+          "provider_attestation": null
+        },
+        "system_prompt_hash": "fb99b2f517c01e0955ee7ca2e3467f130ff29510f10dc731530555281c2bebd1",
+        "tool_manifest": [
+          {
+            "tool_id": "zendesk",
+            "tool_category": "ticket_system",
+            "allowed_actions": [
+              "read_ticket"
+            ],
+            "data_scope": "tickets/",
+            "rate_limit": {
+              "calls_per_minute": 120
+            }
+          }
+        ],
+        "sequence_rules": [],
+        "data_classification": [
+          "support_tickets"
+        ],
+        "output_restrictions": {
+          "no_external_domains": true
+        },
+        "escalation_triggers": [],
+        "not_before": "2026-01-01T00:00:00Z",
+        "not_after": "2026-12-31T23:59:59Z"
+      },
+      "parent": {
+        "org_id": "acme_corp",
+        "user_id": "john.doe@acme.com",
+        "parent_agent_id": null,
+        "declared_purpose": "Process and respond to customer support tickets",
+        "goal_structure": {
+          "type": "task_completion",
+          "domain": "customer_support",
+          "scope": "read_write",
+          "targets": [
+            "tickets",
+            "customer_records"
+          ],
+          "forbidden_domains": [
+            "finance",
+            "hr",
+            "legal"
+          ],
+          "max_delegation_depth": 2,
+          "compliance_tier": "professional"
+        },
+        "model_attestation": {
+          "mode": "api_hosted",
+          "model_id": "claude-sonnet-4-6",
+          "provider": "anthropic",
+          "provider_attestation": null
+        },
+        "system_prompt_hash": "9476e4eea7399250a9c4d0d8434685a3de54d8c2eedd4e1c1f2e38ee066452bf",
+        "tool_manifest": [
+          {
+            "tool_id": "zendesk",
+            "tool_category": "ticket_system",
+            "allowed_actions": [
+              "read_ticket",
+              "update_ticket",
+              "close_ticket"
+            ],
+            "data_scope": "tickets/",
+            "rate_limit": {
+              "calls_per_minute": 60,
+              "calls_per_day": 5000
+            }
+          },
+          {
+            "tool_id": "email",
+            "tool_category": "email",
+            "allowed_actions": [
+              "send"
+            ],
+            "data_scope": "outbound/",
+            "rate_limit": {
+              "calls_per_minute": 10,
+              "calls_per_day": 200
+            }
+          }
+        ],
+        "sequence_rules": [
+          {
+            "rule_id": "no-read-then-external-send",
+            "description": "Prevent reading tickets then sending external email",
+            "pattern": [
+              "zendesk:read_ticket",
+              "email:send"
+            ],
+            "window": 5,
+            "on_match": "escalate",
+            "unless": null
+          }
+        ],
+        "data_classification": [
+          "customer_pii",
+          "support_tickets"
+        ],
+        "output_restrictions": {
+          "no_external_domains": true
+        },
+        "escalation_triggers": [
+          {
+            "id": "legal_matter",
+            "pattern": "legal_matter"
+          }
+        ],
+        "not_before": "2026-01-01T00:00:00Z",
+        "not_after": "2026-12-31T23:59:59Z"
+      },
+      "expected_valid": false,
+      "expected_reason_prefix": "rate_limit_exceeds_parent"
+    }
+  ],
+  "tv_gate": [
+    {
+      "id": "GATE-ALLOW",
+      "description": "Baseline \u2014 all 11 checks pass",
+      "tool_id": "zendesk",
+      "action": "read_ticket",
+      "tool_category": "ticket_system",
+      "data_scope": "tickets/ABC-001",
+      "output_dest": "internal:crm",
+      "session_window": [],
+      "expected_result": "ALLOW",
+      "expected_reason": "all_checks_passed",
+      "gate_step_tested": "ALL"
+    },
+    {
+      "id": "GATE-S1a",
+      "description": "Step 1 \u2014 Tampered contract (intent_id mismatch)",
+      "contract_modification": "declared_purpose changed post-signing",
+      "expected_result": "DENY",
+      "expected_reason_prefix": "contract_invalid:intent_id_mismatch",
+      "gate_step_tested": "1 \u2014 Contract validity"
+    },
+    {
+      "id": "GATE-S1b",
+      "description": "Step 1 \u2014 Revoked contract",
+      "crl_contains": "intentid:v1:3fe52514da758e2c37d514c354545a863978cdbf1bcd9664208b021635020321",
+      "expected_result": "DENY",
+      "expected_reason": "contract_revoked",
+      "gate_step_tested": "1 \u2014 Revocation check"
+    },
+    {
+      "id": "GATE-S1c",
+      "description": "Step 1 \u2014 Expired contract",
+      "not_after": "2026-02-01T00:00:00Z",
+      "expected_result": "DENY",
+      "expected_reason_prefix": "contract_invalid:expired",
+      "gate_step_tested": "1 \u2014 Temporal validity"
+    },
+    {
+      "id": "GATE-S2",
+      "description": "Step 2 \u2014 Tool not in manifest",
+      "tool_id": "payroll_system",
+      "action": "read",
+      "expected_result": "DENY",
+      "expected_reason_prefix": "tool_not_in_manifest",
+      "gate_step_tested": "2 \u2014 Tool authorization"
+    },
+    {
+      "id": "GATE-S3",
+      "description": "Step 3 \u2014 Action not permitted (delete_ticket not in allowed_actions)",
+      "tool_id": "zendesk",
+      "action": "delete_ticket",
+      "expected_result": "DENY",
+      "expected_reason_prefix": "action_not_permitted",
+      "gate_step_tested": "3 \u2014 Action authorization"
+    },
+    {
+      "id": "GATE-S4",
+      "description": "Step 4 \u2014 Data out of declared scope",
+      "tool_id": "zendesk",
+      "action": "read_ticket",
+      "data_scope": "hr/payroll/march2026",
+      "declared_scope": "tickets/",
+      "expected_result": "DENY",
+      "expected_reason_prefix": "data_out_of_scope",
+      "gate_step_tested": "4 \u2014 Data scope"
+    },
+    {
+      "id": "GATE-S5",
+      "description": "Step 5 \u2014 Output to external domain blocked",
+      "tool_id": "email",
+      "action": "send",
+      "output_dest": "external:attacker.com",
+      "output_restrictions": {
+        "no_external_domains": true
+      },
+      "expected_result": "DENY",
+      "expected_reason_prefix": "output_restricted",
+      "gate_step_tested": "5 \u2014 Output restriction"
+    },
+    {
+      "id": "GATE-S6",
+      "description": "Step 6 \u2014 Rate limit exceeded",
+      "tool_id": "zendesk",
+      "action": "read_ticket",
+      "rate_limit": {
+        "calls_per_minute": 60,
+        "_test_exceeded": true
+      },
+      "expected_result": "DENY",
+      "expected_reason": "rate_limit_exceeded",
+      "gate_step_tested": "6 \u2014 Rate compliance"
+    },
+    {
+      "id": "GATE-S7",
+      "description": "Step 7 \u2014 Intent coherence anomaly: payroll tool for customer_support agent",
+      "tool_id": "payroll_tool",
+      "tool_category": "payroll",
+      "agent_domain": "customer_support",
+      "domain_distance": 0.5,
+      "threshold": 0.6,
+      "expected_result": "ESCALATE",
+      "expected_reason_prefix": "intent_coherence_anomaly",
+      "gate_step_tested": "7 \u2014 Intent coherence"
+    },
+    {
+      "id": "GATE-S8",
+      "description": "Step 8 \u2014 Sequence rule triggered: read_ticket then send",
+      "tool_id": "email",
+      "action": "send",
+      "session_window": [
+        "zendesk:read_ticket"
+      ],
+      "matching_rule": "no-read-then-external-send",
+      "expected_result": "ESCALATE",
+      "expected_reason_prefix": "sequence_rule_triggered",
+      "gate_step_tested": "8 \u2014 Action sequence constraints"
+    },
+    {
+      "id": "GATE-S9",
+      "description": "Step 9 \u2014 Escalation trigger matched: 'legal_matter' in data_scope",
+      "tool_id": "zendesk",
+      "action": "read_ticket",
+      "data_scope": "tickets/legal_matter/TKT-777",
+      "matching_trigger": {
+        "id": "legal_matter",
+        "pattern": "legal_matter"
+      },
+      "expected_result": "ESCALATE",
+      "expected_reason_prefix": "escalation_trigger",
+      "gate_step_tested": "9 \u2014 Escalation triggers"
+    },
+    {
+      "id": "GATE-S10",
+      "description": "Step 10 \u2014 Delegation chain invalid (see DEL-2 through DEL-6)",
+      "note": "Delegation chain failures produce DENY with reason starting 'delegation_'.",
+      "cross_ref": [
+        "DEL-2",
+        "DEL-3",
+        "DEL-4",
+        "DEL-5",
+        "DEL-6"
+      ],
+      "gate_step_tested": "10 \u2014 Delegation chain validation"
+    }
+  ],
+  "tv_sequence": [
+    {
+      "id": "SEQ-1",
+      "description": "Pattern not triggered \u2014 read_ticket not in window",
+      "tool_id": "email",
+      "action": "send",
+      "session_window": [],
+      "expected_result": "CONTINUE",
+      "note": "No prior actions; pattern [read_ticket, send] cannot match"
+    },
+    {
+      "id": "SEQ-2",
+      "description": "Pattern triggered \u2014 read_ticket immediately precedes send",
+      "tool_id": "email",
+      "action": "send",
+      "session_window": [
+        "zendesk:read_ticket"
+      ],
+      "expected_result": "ESCALATE",
+      "expected_reason_prefix": "sequence_rule_triggered"
+    },
+    {
+      "id": "SEQ-3",
+      "description": "Pattern not triggered \u2014 read_ticket beyond window boundary",
+      "tool_id": "email",
+      "action": "send",
+      "session_window": [
+        "a:b",
+        "c:d",
+        "e:f",
+        "g:h",
+        "i:j"
+      ],
+      "expected_result": "CONTINUE",
+      "note": "Window=5, read_ticket is not in the 4 most recent actions before candidate"
+    },
+    {
+      "id": "SEQ-4",
+      "description": "Pattern matched as subsequence \u2014 read_ticket not immediately before send",
+      "tool_id": "email",
+      "action": "send",
+      "session_window": [
+        "zendesk:update_ticket",
+        "zendesk:read_ticket",
+        "zendesk:close_ticket"
+      ],
+      "expected_result": "ESCALATE",
+      "note": "Subsequence matching: read_ticket...send matches even with close_ticket between"
+    }
+  ],
+  "tv_coherence": [
+    {
+      "id": "COH-1",
+      "description": "Same domain \u2014 ticket_system for customer_support agent",
+      "tool_id": "zendesk",
+      "tool_category": "ticket_system",
+      "goal_domain": "customer_support",
+      "forbidden_domains": [
+        "finance",
+        "hr",
+        "legal"
+      ],
+      "expected_result": "COHERENT",
+      "expected_distance": 0.0,
+      "threshold": 0.6,
+      "actual_distance": 0.0
+    },
+    {
+      "id": "COH-2",
+      "description": "Adjacent domain \u2014 email for customer_support agent (cross_domain)",
+      "tool_id": "email_api",
+      "tool_category": "email",
+      "goal_domain": "customer_support",
+      "forbidden_domains": [
+        "finance",
+        "hr",
+        "legal"
+      ],
+      "expected_result": "COHERENT",
+      "expected_distance": 0.0,
+      "threshold": 0.6,
+      "actual_distance": 0.0
+    },
+    {
+      "id": "COH-3",
+      "description": "Distant domain \u2014 payroll tool for customer_support agent",
+      "tool_id": "payroll_tool",
+      "tool_category": "payroll",
+      "goal_domain": "customer_support",
+      "forbidden_domains": [
+        "finance",
+        "hr",
+        "legal"
+      ],
+      "expected_result": "ANOMALY",
+      "expected_distance": 0.7,
+      "threshold": 0.6,
+      "actual_distance": 1.0
+    },
+    {
+      "id": "COH-4",
+      "description": "Forbidden domain \u2014 finance tool for customer_support agent",
+      "tool_id": "banking_api",
+      "tool_category": "banking",
+      "goal_domain": "customer_support",
+      "forbidden_domains": [
+        "finance",
+        "hr",
+        "legal"
+      ],
+      "expected_result": "ANOMALY",
+      "expected_distance": 1.0,
+      "threshold": 0.6,
+      "actual_distance": 1.0
+    },
+    {
+      "id": "COH-5",
+      "description": "Adjacent domain \u2014 data_engineering tool for software_development agent",
+      "tool_id": "db_tool",
+      "tool_category": "database",
+      "goal_domain": "software_development",
+      "forbidden_domains": [
+        "finance",
+        "hr"
+      ],
+      "expected_result": "COHERENT",
+      "expected_distance": 0.2,
+      "threshold": 0.6,
+      "actual_distance": 0.2
+    },
+    {
+      "id": "COH-6",
+      "description": "Threshold boundary \u2014 content_creation for software_development (distance=0.6)",
+      "tool_id": "cms_tool",
+      "tool_category": "cms",
+      "goal_domain": "software_development",
+      "forbidden_domains": [
+        "finance",
+        "hr"
+      ],
+      "expected_result": "COHERENT",
+      "expected_distance": 0.6,
+      "threshold": 0.6,
+      "actual_distance": 0.6
+    },
+    {
+      "id": "COH-7",
+      "description": "Just above threshold \u2014 customer_support for software_development (distance=0.7)",
+      "tool_id": "crm_tool",
+      "tool_category": "crm",
+      "goal_domain": "software_development",
+      "forbidden_domains": [
+        "finance",
+        "hr"
+      ],
+      "expected_result": "ANOMALY",
+      "expected_distance": 0.7,
+      "threshold": 0.6,
+      "actual_distance": 0.7
+    }
+  ]
+}
